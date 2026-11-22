@@ -1,0 +1,6 @@
+# Sample OpenAlex author IDs for weighted h-index evaluation
+# One per line. Lines starting with # are comments.
+# Example: Hirsch (h-index inventor)
+A5103253126
+# Your own ID (from your earlier command)
+A5010921410
