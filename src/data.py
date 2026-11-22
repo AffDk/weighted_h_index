@@ -8,11 +8,15 @@ LLM relevance scoring.
 from __future__ import annotations
 
 import json
+import os
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import httpx
+from dotenv import load_dotenv
+
+load_dotenv()
 
 OPENALEX_BASE = "https://api.openalex.org"
 DEFAULT_PER_PAGE = 200
@@ -104,6 +108,8 @@ class OpenAlexClient:
         self.headers: dict[str, str] = {}
         if mailto:
             self.headers["mailto"] = mailto
+        if api_key is None:
+            api_key = os.getenv("OPENALEX_API_KEY")
         if api_key:
             self.headers["api-key"] = api_key
         self._client = httpx.Client(timeout=timeout, headers=self.headers)
