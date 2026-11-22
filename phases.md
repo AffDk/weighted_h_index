@@ -52,43 +52,39 @@ This preserves Zhu et al.'s formal definition but substitutes context-aware abst
 
 ---
 
-## Phase 2 — LLM integration (API)
+## Phase 2 — LLM integration (API) (complete)
 
-- [ ] `src/llm/client.py` — base OpenAI-compatible async client
-- [ ] `src/llm/providers.py` — Qwen (DashScope) primary, DeepSeek, Kimi, GLM provider config via env vars
-- [ ] `src/llm/prompts.py` — relevance prompt: citing abstract + cited abstract → weight `w ∈ [0,1]` (0–1 scale, JSON output)
-- [ ] Batching, concurrency control, rate-limit handling
-- [ ] Cost/token tracking per run
-- [ ] Response caching (SQLite/JSON) to avoid re-calls on identical abstract pairs
-
----
-
-## Phase 3 — Weighted h-index
-
-- [ ] `src/index.py` — conventional h-index, hip-index (c² weighting, Zhu et al. reference), weighted h-index (LLM weight)
-- [ ] CLI command: `weighted-h-index compute --author <id> --method weighted|conventional|hip`
-- [ ] Unit tests for index math
+- [x] `src/llm/types.py` — `RelevanceResponse` shared type (broke circular import)
+- [x] `src/llm/client.py` — async OpenAI-compatible client with caching + cost tracking
+- [x] `src/llm/cache.py` — SQLite-backed response cache keyed by abstract-pair hash
+- [x] `src/llm/tracker.py` — cost/token tracking with per-provider pricing estimates
+- [x] `src/llm/providers.py` — Qwen/DeepSeek/Kimi/GLM config, `load_dotenv()` on import
+- [x] `src/llm/prompts.py` — relevance prompt + `clamp_weight`
+- [x] `src/scoring.py` — `CorpusScorer`: concurrency control, rate delay, threshold ablation
+- [x] CLI `compute` — `--use-llm`, `--provider`, `--concurrency`, `--threshold`, `--cache-db`, `--cost-report`
+- [x] `tests/test_cache.py`, `tests/test_tracker.py`, `tests/test_scoring.py` — 14 tests passing
+- [x] Ruff lint clean
 
 ---
 
-## Phase 4 — Baselines
+## Phase 3 — Evaluation (current)
 
-- [ ] Conventional h-index implementation
-- [ ] Hip-index (c²) implementation as reference where full-text mention counts are available
-- [ ] Comparison harness: weighted vs conventional vs hip
-
----
-
-## Phase 5 — Evaluation
-
-- [ ] `src/evaluation.py` — Spearman correlation (weighted vs conventional h-index rankings)
-- [ ] Precision@N for identifying top researchers (mirroring Zhu et al.'s ACL Fellows experiment)
-- [ ] Ablation on weight threshold (e.g., count only w ≥ 0.5)
-- [ ] Notebooks: result visualization
+- [ ] Enhance `src/evaluation.py` — Spearman correlation, precision@N, threshold ablation
+- [ ] Comparison harness: weighted vs conventional vs hip rankings
+- [ ] Notebooks: result visualization (correlation plots, precision@N tables)
+- [ ] Run evaluation on sampled OpenAlex researchers
 
 ---
 
-## Phase 6 — White paper (LaTeX)
+## Phase 4 — Local model
+
+- [ ] Ollama backend (`src/llm/ollama.py`), offline mode
+- [ ] Parity tests vs API results
+- [ ] Config switch: `LLM_BACKEND=api|ollama`
+
+---
+
+## Phase 5 — White paper (LaTeX)
 
 - [ ] Draft: Abstract, Introduction, Related Work (Zhu et al. hip-index), Methodology, Experiments, Results, Conclusion
 - [ ] Compile to PDF via `latexmk`
@@ -96,17 +92,9 @@ This preserves Zhu et al.'s formal definition but substitutes context-aware abst
 
 ---
 
-## Phase 7 — Local model
+## Phase 6 — Polish
 
-- [ ] Ollama backend (Qwen3-4B/8B), offline mode
-- [ ] Parity tests vs API results
-- [ ] Config switch: `LLM_BACKEND=api|ollama`
-
----
-
-## Phase 8 — Polish
-
-- [ ] Packaging (pip installable)
+- [ ] Packaging (pip installable via uv)
 - [ ] README completion
 - [ ] CI workflow (`.github/workflows/ci.yml`): lint, typecheck, tests
 - [ ] Release

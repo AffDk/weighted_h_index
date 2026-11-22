@@ -57,4 +57,9 @@ def get_client(provider: str | None = None) -> LLMClient:
     api_key = os.getenv(cfg.api_key_env)
     if not api_key:
         raise ValueError(f"Missing API key env var: {cfg.api_key_env}")
-    return LLMClient(api_key=api_key, base_url=cfg.base_url, model=cfg.model)
+    return LLMClient(
+        api_key=api_key,
+        base_url=cfg.base_url,
+        model=cfg.model,
+        provider=cfg.name,
+    )
