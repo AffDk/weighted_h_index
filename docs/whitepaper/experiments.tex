@@ -1,0 +1,22 @@
+\section{Experiments}
+
+\subsection{Dataset}
+
+OpenAlex subgraphs for sampled researchers, including paper abstracts and citation edges.
+
+\subsection{Metrics}
+
+\begin{enumerate}
+    \item \textbf{Spearman correlation} between author rankings by weighted h-index vs conventional h-index.
+    \item \textbf{Precision@N} for identifying top researchers (mirroring Zhu et al.'s ACL Fellows experiment).
+    \item \textbf{Ablation:} weight threshold (count only $w \ge \tau$ for $\tau \in \{0.3, 0.5, 0.7\}$).
+\end{enumerate}
+
+\subsection{Procedure}
+
+\begin{enumerate}
+    \item Fetch abstracts + citation edges from OpenAlex.
+    \item Score each citation edge with the LLM relevance scorer.
+    \item Compute weighted h-index, conventional h-index, and hip-index per author.
+    \item Report correlation and precision@N.
+\end{enumerate>

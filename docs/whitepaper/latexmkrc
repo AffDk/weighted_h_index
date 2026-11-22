@@ -1,0 +1,8 @@
+# latexmkrc for Weighted H-Index white paper
+$pdf_mode = 1;
+$postscript_mode = 0;
+$dvi_mode = 0;
+$pdflatex = 'pdflatex -interaction=nonstopmode -shell-escape %O %S';
+$bibtex = 1;
+$max_repeat = 5;
+$out_dir = 'build';

@@ -1,0 +1,36 @@
+\section{Methodology}
+
+\subsection{Definitions}
+
+Let $p_i$ be a citing paper and $p_j$ a cited paper. Let $A(p)$ denote the abstract of paper $p$.
+
+An LLM scorer produces a relevance weight:
+\[
+w(p_i \to p_j) = \textsc{LLMRelevance}(A(p_i), A(p_j)) \in [0,1]
+\]
+where $w \approx 1$ means the citing article heavily relies on the cited article, and $w \approx 0$ means marginal relevance.
+
+The \emph{weighted citation count} of paper $p_j$ is:
+\[
+\operatorname{wcp}(p_j) = \sum_{p_i : p_i \text{ cites } p_j} w(p_i \to p_j).
+\]
+
+For an author $a$ with oeuvre $O(a)$, the \emph{weighted h-index} is the largest $h$ such that:
+\[
+\left|\{ p_j \in O(a) : \operatorname{wcp}(p_j) \ge h \}\right| \ge h.
+\]
+
+\subsection{Baselines}
+
+\begin{itemize}
+    \item \textbf{Conventional h-index:} each citation has weight 1.
+    \item \textbf{Hip-index (Zhu et al.):} each citation edge weighted by $c^2$ where $c$ is in-body mention count (requires full text; reference implementation).
+\end{itemize}
+
+\subsection{LLM scoring}
+
+We use a provider-abstracted OpenAI-compatible client. Primary provider: Qwen3.7 Flash (Alibaba DashScope). Fallback: DeepSeek V4 Flash. Prompt returns a single float in $[0,1]$ given citing and cited abstracts. Responses are cached by abstract-pair hash to avoid redundant calls.
+
+\subsection{Data}
+
+Paper abstracts and citation edges are fetched from the OpenAlex API (no key required). Researchers are sampled and their subgraphs extracted.

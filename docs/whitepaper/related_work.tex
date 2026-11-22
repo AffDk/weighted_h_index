@@ -1,0 +1,19 @@
+\section{Related Work}
+
+\subsection{Conventional h-index}
+
+Introduced by Hirsch~\cite{hirsch2005}, the h-index is the largest $h$ such that an author has $h$ papers each cited at least $h$ times. Each citation has weight 1.
+
+\subsection{Influence-Primed H-index (hip-index)}
+
+Zhu et al.~\cite{zhu2015measuring} observe that not all citations are equal. They define academic influence via author-labeled essential references and show that in-body mention counts are predictive of influence. They weight each citation edge by $c^2$, where $c$ is the number of times a reference is mentioned in the citing paper's body, and define the influence-primed h-index (hip-index) analogously to the conventional h-index.
+
+Experiments on the ACL Anthology Network show the hip-index correlates with but diverges from the conventional h-index (Spearman correlation down to 0.01 for lower-ranked authors) and better identifies ACL Fellows (average precision 14\% vs 10\%).
+
+\subsection{Other weighted citation metrics}
+
+PageRank-based metrics (e.g., PageRank-based author impact) and field-normalized citation weights exist, but few operate on abstract-derived relevance at the paper-pair level.
+
+\subsection{Gap}
+
+Zhu et al. require full-text mention counts, which are not always available. Our approach uses abstracts only, making the metric applicable to a broader corpus, and replaces rule-based counting with an LLM-based relevance assessment.

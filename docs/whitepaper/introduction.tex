@@ -1,0 +1,17 @@
+\section{Introduction}
+
+The h-index~\cite{hirsch2005} is a standard metric for quantifying researcher productivity and citation impact. However, it assumes all citations carry equal weight. In practice, researchers may cite colleagues' work with little topical relevance, inflating scores without reflecting genuine intellectual contribution.
+
+We propose the \emph{weighted h-index}: a context-aware metric in which each citation is assigned a relevance weight $w \in [0,1]$ reflecting how heavily the citing article relies on the cited article. Because full-text access is not always available, we compute weights from article \emph{abstracts} using a large language model (LLM). The approach adapts Zhu et al.'s Influence-Primed H-index~\cite{zhu2015measuring}, which weights citations by in-body mention counts; we substitute those counts with LLM-derived relevance scores.
+
+Our contributions:
+\begin{itemize}
+    \item A context-aware weighted h-index computable from abstracts alone.
+    \item An LLM-based relevance scorer with provider abstraction (Qwen, DeepSeek, Kimi, GLM) and local-model fallback.
+    \item Validation against conventional h-index and the hip-index using OpenAlex data.
+    \item A replicable pipeline and LaTeX-documented white paper.
+\end{itemize}
+
+\section*{Problem statement}
+
+Citation inflation through mutual or courtesy citations distorts the h-index. A metric that discounts marginally relevant citations would more accurately reflect true academic influence.
