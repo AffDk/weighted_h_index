@@ -23,13 +23,15 @@ def fetch(
     author_id: str = typer.Argument(..., help="OpenAlex author ID (e.g. A510...)"),
     per_page: int = typer.Option(200, help="Results per page"),
     mailto: str = typer.Option("", help="Email for OpenAlex polite pool"),
+    api_key: str = typer.Option("", help="OpenAlex API key (free, get at openalex.org/settings/api)"),
     out: str = typer.Option("data/corpus.jsonl", help="Output JSONL path"),
     max_citing: int = typer.Option(0, help="Max citing works per author work (0 = unlimited)"),
 ) -> None:
     """Fetch a researcher's subgraph from OpenAlex and save to JSONL."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
     mailto_value = mailto or None
-    client = OpenAlexClient(mailto=mailto_value)
+    api_key_value = api_key or None
+    client = OpenAlexClient(mailto=mailto_value, api_key=api_key_value)
     try:
         corpus = build_researcher_corpus(
             client,

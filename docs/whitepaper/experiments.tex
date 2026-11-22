@@ -2,21 +2,83 @@
 
 \subsection{Dataset}
 
-OpenAlex subgraphs for sampled researchers, including paper abstracts and citation edges.
+We sampled $N$ researchers from OpenAlex across computer science and artificial intelligence. For each researcher we fetched:
+\begin{itemize}
+    \item All works in their oeuvre (with abstracts),
+    \item All works citing those works (with abstracts),
+    \item Citation edges: citing paper $\to$ cited paper.
+\end{itemize}
+
+Each edge was scored by the LLM relevance scorer to obtain $w \in [0,1]$. Responses were cached by abstract-pair hash to avoid redundant API calls.
 
 \subsection{Metrics}
 
+We evaluated three h-index variants per researcher:
 \begin{enumerate}
-    \item \textbf{Spearman correlation} between author rankings by weighted h-index vs conventional h-index.
-    \item \textbf{Precision@N} for identifying top researchers (mirroring Zhu et al.'s ACL Fellows experiment).
-    \item \textbf{Ablation:} weight threshold (count only $w \ge \tau$ for $\tau \in \{0.3, 0.5, 0.7\}$).
+    \item \textbf{Conventional h-index:} each citation weight $=1$.
+    \item \textbf{Weighted h-index:} each citation weight $=w(p_i\to p_j)$ from LLM relevance scoring.
+    \item \textbf{Hip-index (Zhu et al.):} reference implementation using $c^2$ weighting where full-text mention counts are available.
+\end{itemize}
+
+We report:
+\begin{enumerate}
+    \item \textbf{Spearman correlation} between author rankings by each pair of methods.
+    \item \textbf{Precision@N} at identifying top researchers, using a ground-truth set of influential researchers (e.g., ACL Fellows, award winners, or top-$K$ by conventional h-index).
+    \item \textbf{Average Precision (AveP)} as in Zhu et al. (2015).
+    \item \textbf{Threshold ablation}: counting only edges with $w \ge \tau$ for $\tau \in \{0.3, 0.5, 0.7\}$.
 \end{enumerate}
 
-\subsection{Procedure}
+\subsection{Hypothesis}
 
-\begin{enumerate}
-    \item Fetch abstracts + citation edges from OpenAlex.
-    \item Score each citation edge with the LLM relevance scorer.
-    \item Compute weighted h-index, conventional h-index, and hip-index per author.
-    \item Report correlation and precision@N.
-\end{enumerate>
+The weighted h-index should reorder researchers relative to the conventional h-index: researchers whose citations are genuinely influential (high relevance weights) should rank higher under the weighted variant, while researchers inflated by courtesy/colleague citations (low relevance) should rank lower. We expect the largest divergence in the middle of the ranking distribution.
+
+\subsection{Results}
+
+\begin{table}[h]
+\centering
+\caption{Spearman correlation between h-index variant rankings.}
+\label{tab:correlation}
+\begin{tabular}{lccc}
+\toprule
+Comparison & $\rho$ (Spearman) & $p$-value & Interpretation \\
+\midrule
+Conventional vs Weighted & TBD & TBD & TBD \\
+Conventional vs Hip & TBD & TBD & TBD \\
+Weighted vs Hip & TBD & TBD & TBD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Precision@N at identifying top researchers (ground truth: TBD).}
+\label{tab:precision}
+\begin{tabular}{lcccc}
+\toprule
+$N$ & Conventional & Weighted & Hip & AveP \\
+\midrule
+5 & TBD & TBD & TBD & TBD \\
+10 & TBD & TBD & TBD & TBD \\
+15 & TBD & TBD & TBD & TBD \\
+20 & TBD & TBD & TBD & TBD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Threshold ablation: weighted h-index at different relevance cutoffs.}
+\label{tab:ablation}
+\begin{tabular}{lcccc}
+\toprule
+Threshold $\tau$ & Mean weighted h-index & $\Delta$ vs conventional & Papers retained (\%) \\
+\midrule
+0.0 (all edges) & TBD & TBD & 100 \\
+0.3 & TBD & TBD & TBD \\
+0.5 & TBD & TBD & TBD \\
+0.7 & TBD & TBD & TBD \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+TBD after running the experiment pipeline (Phase 3). See \texttt{notebooks/evaluation.ipynb} for the synthetic-data demonstration.

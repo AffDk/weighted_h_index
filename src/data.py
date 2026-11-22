@@ -93,12 +93,19 @@ class ResearcherCorpus:
 
 
 class OpenAlexClient:
-    """Thin client with polite-pool email and retry/backoff on 429."""
+    """Thin client with polite-pool email, API key, and retry/backoff on 429/401."""
 
-    def __init__(self, mailto: str | None = None, timeout: float = 30.0) -> None:
+    def __init__(
+        self,
+        mailto: str | None = None,
+        api_key: str | None = None,
+        timeout: float = 30.0,
+    ) -> None:
         self.headers: dict[str, str] = {}
         if mailto:
             self.headers["mailto"] = mailto
+        if api_key:
+            self.headers["api-key"] = api_key
         self._client = httpx.Client(timeout=timeout, headers=self.headers)
 
     def _get(self, url: str, params: dict) -> dict:

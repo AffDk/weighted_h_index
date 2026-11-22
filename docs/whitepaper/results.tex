@@ -1,29 +1,19 @@
 \section{Results}
 
-TBD after Phase 5 execution.
+The results below are populated after running the experiment pipeline (Phase 3). Refer to Table~\ref{tab:correlation} for ranking correlations, Table~\ref{tab:precision} for precision@N, and Table~\ref{tab:ablation} for the threshold ablation.
 
-\begin{table}[h]
-\centering
-\caption{Placeholder: Spearman correlation between weighted and conventional h-index rankings.}
-\label{tab:correlation}
-\begin{tabular}{lcc}
-\toprule
-Author group & Conventional vs Weighted & Conventional vs Hip \\
-\midrule
-TBD & TBD & TBD \\
-\bottomrule
-\end{tabular}
-\end{table}
+\subsection{Correlation analysis}
 
-\begin{table}[h]
-\centering
-\caption{Placeholder: Precision@N at identifying top researchers.}
-\label{tab:precision}
-\begin{tabular}{lccc}
-\toprule
-$N$ & Weighted h-index & Conventional h-index & Hip-index \\
-\midrule
-TBD & TBD & TBD & TBD \\
-\bottomrule
-\end{tabular}
-\end{table}
+TBD. We expect the weighted h-index to correlate strongly with the conventional h-index for top researchers (both agree on stars) but to diverge in the middle of the ranking distribution, where citation-quality differences matter most.
+
+\subsection{Precision@N}
+
+TBD. We expect the weighted h-index to achieve higher precision@N than the conventional h-index at identifying influential researchers, mirroring Zhu et al.'s finding that the hip-index (AveP 14\%) outperformed the conventional h-index (AveP 10\%) at identifying ACL Fellows.
+
+\subsection{Threshold ablation}
+
+TBD. Higher relevance thresholds ($\tau \in \{0.5, 0.7\}$) should retain fewer but more meaningful citations, potentially improving discrimination among mid-tier researchers while preserving the top ranking.
+
+\subsection{Discussion}
+
+TBD. Interpret results in light of Zhu et al. (2015) and discuss limitations: abstract-only relevance scoring, LLM variability, OpenAlex coverage, and cost of LLM calls at scale.

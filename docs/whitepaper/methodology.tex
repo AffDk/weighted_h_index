@@ -33,4 +33,4 @@ We use a provider-abstracted OpenAI-compatible client. Primary provider: Qwen3.7
 
 \subsection{Data}
 
-Paper abstracts and citation edges are fetched from the OpenAlex API (no key required). Researchers are sampled and their subgraphs extracted.
+Paper abstracts and citation edges are fetched from the OpenAlex API (free API key required at openalex.org/settings/api). Researchers are sampled and their subgraphs extracted: each author's oeuvre plus all works citing it, yielding citing--cited abstract pairs for LLM scoring.

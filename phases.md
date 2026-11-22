@@ -76,19 +76,19 @@ This preserves Zhu et al.'s formal definition but substitutes context-aware abst
 
 ---
 
-## Phase 4 — Local model
-
-- [ ] Ollama backend (`src/llm/ollama.py`), offline mode
-- [ ] Parity tests vs API results
-- [ ] Config switch: `LLM_BACKEND=api|ollama`
-
----
-
-## Phase 5 — White paper (LaTeX)
+## Phase 4 — White paper (LaTeX)
 
 - [ ] Draft: Abstract, Introduction, Related Work (Zhu et al. hip-index), Methodology, Experiments, Results, Conclusion
 - [ ] Compile to PDF via `latexmk`
 - [ ] Tables/figures for correlation and precision@N results
+
+---
+
+## Phase 5 — Local model (deferred)
+
+- [ ] Ollama backend (`src/llm/ollama.py`), offline mode
+- [ ] Parity tests vs API results
+- [ ] Config switch: `LLM_BACKEND=api|ollama`
 
 ---
 
