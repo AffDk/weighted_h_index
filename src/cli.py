@@ -55,7 +55,7 @@ def compute(
     corpus_path: str = typer.Option("data/corpus.jsonl", help="Corpus JSONL path"),
     method: str = typer.Option("weighted", help="weighted | conventional | hip"),
     use_llm: bool = typer.Option(True, help="Use LLM relevance scoring for weighted method"),
-    provider: str = typer.Option("qwen", help="LLM provider: qwen | deepseek | kimi | glm"),
+    provider: str = typer.Option("gemini", help="LLM provider: gemini"),
     concurrency: int = typer.Option(5, help="Concurrent LLM requests"),
     rate_delay: float = typer.Option(0.0, help="Delay (s) between LLM calls"),
     threshold: float = typer.Option(0.0, help="Only count edges with weight >= threshold"),

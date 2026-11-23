@@ -1,13 +1,7 @@
 """Cost estimation for running the weighted h-index evaluation.
 
 OpenAlex: free with API key (~$1/day shared budget, essentially free for research scale).
-LLM scoring: Qwen3.7 Flash via Alibaba DashScope (~$0.03 in / $0.13 out per 1M tokens).
-
-This script estimates LLM API cost based on:
-  - number of researchers
-  - avg author works per researcher
-  - avg citing works per author work (edges)
-  - avg tokens per LLM call (citing abstract + cited abstract + prompt)
+LLM scoring: Gemini via Google AI Studio API.
 """
 
 from __future__ import annotations
@@ -20,8 +14,8 @@ def estimate_llm_cost(
     avg_author_works: int,
     avg_citing_per_work: int,
     avg_tokens_per_call: int = 900,
-    input_price_per_1m: float = 0.03,
-    output_price_per_1m: float = 0.13,
+    input_price_per_1m: float = 0.15,
+    output_price_per_1m: float = 0.60,
     avg_output_tokens: int = 60,
 ) -> dict[str, float]:
     total_edges = n_researchers * avg_author_works * avg_citing_per_work
@@ -70,8 +64,8 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    print("Weighted h-index evaluation — LLM cost estimate (Qwen3.7 Flash)")
-    print("Pricing: $0.03 in / $0.13 out per 1M tokens (Alibaba DashScope, Nov 2026)")
+    print("Weighted h-index evaluation — LLM cost estimate (Gemini 2.5 Flash)")
+    print("Pricing: $0.15 in / $0.60 out per 1M tokens (verify against Google AI Studio pricing before budgeting)")
     print("OpenAlex: free with API key (shared $1/day budget, effectively free at this scale)")
 
     result = estimate_llm_cost(

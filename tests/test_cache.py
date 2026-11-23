@@ -12,8 +12,8 @@ def test_cache_put_get_roundtrip():
         cache = LLMCache(db_path=Path(d) / "test.sqlite")
         try:
             resp = RelevanceResponse(weight=0.75, reasoning="high relevance", input_tokens=10, output_tokens=5)
-            cache.put("citing abstract A", "cited abstract B", "qwen-model", resp, input_tokens=10, output_tokens=5)
-            fetched = cache.get("citing abstract A", "cited abstract B", "qwen-model")
+            cache.put("citing abstract A", "cited abstract B", "gemini-model", resp, input_tokens=10, output_tokens=5)
+            fetched = cache.get("citing abstract A", "cited abstract B", "gemini-model")
             assert fetched is not None
             assert fetched.weight == 0.75
             assert fetched.reasoning == "high relevance"
@@ -25,7 +25,7 @@ def test_cache_miss_returns_none():
     with tempfile.TemporaryDirectory() as d:
         cache = LLMCache(db_path=Path(d) / "test.sqlite")
         try:
-            fetched = cache.get("unknown citing", "unknown cited", "qwen-model")
+            fetched = cache.get("unknown citing", "unknown cited", "gemini-model")
             assert fetched is None
         finally:
             cache.close()

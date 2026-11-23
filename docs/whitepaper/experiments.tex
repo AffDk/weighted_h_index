@@ -2,7 +2,7 @@
 
 \subsection{Dataset}
 
-We sampled $N$ researchers from OpenAlex across computer science and artificial intelligence. For each researcher we fetched:
+Following Zhu et al. (2015), we sampled 100 researchers from OpenAlex. The first 32 are ACL Fellows elected 2011--2014 (the set available at the time of that study, used as ground truth for influential researchers); the remaining 68 are other prominent ACL Fellows and NLP researchers. For each researcher we fetched:
 \begin{itemize}
     \item All works in their oeuvre (with abstracts),
     \item All works citing those works (with abstracts),
@@ -51,7 +51,7 @@ Weighted vs Hip & TBD & TBD & TBD \\
 
 \begin{table}[h]
 \centering
-\caption{Precision@N at identifying top researchers (ground truth: TBD).}
+\caption{Precision@N at identifying top researchers (ground truth: 32 ACL Fellows, 2011--2014).}
 \label{tab:precision}
 \begin{tabular}{lcccc}
 \toprule

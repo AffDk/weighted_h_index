@@ -14,26 +14,8 @@ from pathlib import Path
 # Approximate per-1M-token rates (input, output) in USD.
 # Sources: provider pricing pages, retrieved Nov 2026.
 PRICING: dict[str, dict[str, tuple[float, float]]] = {
-    "qwen": {
-        "qwen3.7-flash": (0.03, 0.13),
-        "qwen3.8-flash": (0.15, 0.47),
-        "qwen3.7-plus": (0.28, 0.83),
-        "qwen3.7-max": (0.84, 2.52),
-        "qwen3.8-max": (1.67, 5.00),
-    },
-    "deepseek": {
-        "deepseek-chat": (0.28, 0.42),
-        "deepseek-reasoner": (0.28, 0.42),
-        "deepseek-v4-flash": (0.22, 0.66),
-        "deepseek-v4-pro": (0.66, 1.98),
-    },
-    "kimi": {
-        "kimi-k2": (0.56, 2.25),
-        "kimi-k3": (3.00, 15.00),
-    },
-    "glm": {
-        "glm-4-flash": (0.08, 0.28),
-        "glm-5.2-flash": (0.08, 0.28),
+    "gemini": {
+        "gemini-2.5-flash": (0.15, 0.60),
     },
 }
 

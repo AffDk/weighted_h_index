@@ -21,36 +21,17 @@ class ProviderConfig:
 
 
 PROVIDERS: dict[str, ProviderConfig] = {
-    "qwen": ProviderConfig(
-        name="qwen",
-        base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
-        model="qwen3.7-flash",
-        api_key_env="DASHSCOPE_API_KEY",
-    ),
-    "deepseek": ProviderConfig(
-        name="deepseek",
-        base_url="https://api.deepseek.com",
-        model="deepseek-chat",
-        api_key_env="DEEPSEEK_API_KEY",
-    ),
-    "kimi": ProviderConfig(
-        name="kimi",
-        base_url="https://api.moonshot.cn/v1",
-        model="kimi-k2",
-        api_key_env="MOONSHOT_API_KEY",
-    ),
-    "glm": ProviderConfig(
-        name="glm",
-        base_url="https://open.bigmodel.cn/api/paas/v4",
-        model="glm-4-flash",
-        api_key_env="ZHIPU_API_KEY",
+    "gemini": ProviderConfig(
+        name="gemini",
+        base_url="https://generativelanguage.googleapis.com",
+        model="gemini-2.5-flash",
+        api_key_env="GEMINI_API_KEY",
     ),
 }
 
 
 def get_client(provider: str | None = None) -> LLMClient:
-    """Build an LLMClient for the given provider (default from env or qwen)."""
-    provider = provider or os.getenv("LLM_PROVIDER", "qwen")
+    provider = provider or os.getenv("LLM_PROVIDER", "gemini")
     if provider not in PROVIDERS:
         raise ValueError(f"Unknown provider: {provider}. Available: {list(PROVIDERS)}")
     cfg = PROVIDERS[provider]
@@ -59,7 +40,7 @@ def get_client(provider: str | None = None) -> LLMClient:
         raise ValueError(f"Missing API key env var: {cfg.api_key_env}")
     return LLMClient(
         api_key=api_key,
-        base_url=cfg.base_url,
-        model=cfg.model,
+        base_url=os.getenv("GEMINI_BASE_URL", cfg.base_url),
+        model=os.getenv("GEMINI_MODEL", cfg.model),
         provider=cfg.name,
     )

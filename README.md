@@ -37,17 +37,10 @@ Never commit real API keys to git. The repo uses a `.env` file (gitignored) load
 
 ### 1. Get an API key
 
-**Primary (recommended) — Qwen via Alibaba Cloud DashScope** (cheapest Chinese provider):
-1. Sign up at [Alibaba Cloud](https://account.alibabacloud.com/login/login_new.htm).
-2. Go to the [DashScope API Keys page](https://help.aliyun.com/zh/dashscope/developer-reference/api-details).
-3. Create an API key. It looks like `sk-...`.
-
-**Fallback — DeepSeek:**
-1. Sign up at [DeepSeek Platform](https://platform.deepseek.com).
-2. Go to [API Keys](https://platform.deepseek.com/api_keys).
-3. Create a key. It looks like `sk-...`.
-
-Other supported providers (Kimi/Moonshot, Zhipu/GLM) follow the same pattern; see `src/llm/providers.py` for the env var names.
+**Primary (recommended) — Gemini via Google AI Studio**:
+1. Sign in at [Google AI Studio](https://aistudio.google.com).
+2. Open the [API keys page](https://aistudio.google.com/app/apikey).
+3. Create an API key.
 
 ### 2. Create your local `.env`
 
@@ -56,22 +49,27 @@ Other supported providers (Kimi/Moonshot, Zhipu/GLM) follow the same pattern; se
 Copy-Item .env.example .env
 ```
 
-Then edit `.env` and paste your key(s):
+Then edit `.env` and paste your key:
 
 ```ini
-LLM_PROVIDER=qwen
-DASHSCOPE_API_KEY=sk-your_actual_key_here
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=sk-your_actual_key_here
 ```
 
-Only one provider key is strictly required; set `LLM_PROVIDER` to match. `.env` is listed in `.gitignore` and will never be committed.
+Only one provider key is strictly required. `.env` is listed in `.gitignore` and will never be committed.
 
 ### 3. Verify
 
 ```powershell
-.venv\Scripts\python -c "from src.llm.providers import get_client; c = get_client(); print('client ready:', c.model)"
+.venv\Scripts\python scripts/test_gemini.py
 ```
 
+The test never prints the key. It calls the Gemini API once with cache disabled and reports failures with the key redacted.
+
 If you get `Missing API key env var`, your `.env` key isn't loaded — check the filename and spelling.
+If you get `401`, the API key is invalid or not enabled for the Gemini API.
+If you get `403`, the key is authenticated but lacks permission or billing is blocked.
+If you get `404`, the model name is wrong or not available in your region.
 
 ## Usage
 
@@ -89,14 +87,13 @@ weighted-h-index compute --author A5103253126 --method weighted
 
 ## LLM configuration
 
-Set `LLM_PROVIDER=qwen` (default), `deepseek`, `kimi`, or `glm`, plus the matching API key env var:
+Set `LLM_PROVIDER=gemini` (default), plus `GEMINI_API_KEY`.
 
 | Provider | Env var | Get key at |
 |---|---|---|
-| Qwen (DashScope) | `DASHSCOPE_API_KEY` | Alibaba Cloud DashScope console |
-| DeepSeek | `DEEPSEEK_API_KEY` | https://platform.deepseek.com/api_keys |
-| Kimi (Moonshot) | `MOONSHOT_API_KEY` | Moonshot platform |
-| GLM (Zhipu) | `ZHIPU_API_KEY` | Zhipu open platform |
+| Gemini | `GEMINI_API_KEY` | https://aistudio.google.com/app/apikey |
+
+Optional overrides: `GEMINI_BASE_URL`, `GEMINI_MODEL`.
 
 ## Citation
 

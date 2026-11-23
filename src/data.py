@@ -241,7 +241,8 @@ def build_researcher_corpus(
         if max_citing_per_work is not None:
             citing = citing[:max_citing_per_work]
         for p in citing:
-            corpus.add_paper(p)
+            if p.openalex_id not in corpus.papers:
+                corpus.add_paper(p)
             corpus.add_edge(p.openalex_id, work.openalex_id)
 
     return corpus

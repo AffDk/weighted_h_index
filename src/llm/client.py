@@ -1,13 +1,11 @@
-"""Base OpenAI-compatible LLM client for relevance scoring."""
+"""Gemini LLM client for relevance scoring."""
 
 from __future__ import annotations
 
+import json
 import os
 
-try:
-    from openai import AsyncOpenAI
-except ImportError:  # pragma: no cover - openai optional at import time
-    AsyncOpenAI = None  # type: ignore[assignment]
+import httpx
 
 from .cache import LLMCache
 from .tracker import CostTracker
@@ -15,7 +13,7 @@ from .types import RelevanceResponse
 
 
 class LLMClient:
-    """Minimal async client wrapper around OpenAI-compatible endpoints.
+    """Minimal async client for the Gemini generateContent API.
 
     Supports response caching (to avoid redundant API calls) and
     cost/token tracking (for budgeting and reporting).
@@ -25,19 +23,17 @@ class LLMClient:
         self,
         api_key: str | None = None,
         base_url: str | None = None,
-        model: str = "qwen3.7-flash",
+        model: str = "gemini-2.5-flash",
         timeout: float = 60.0,
         cache: LLMCache | None = None,
         tracker: CostTracker | None = None,
-        provider: str = "qwen",
+        provider: str = "gemini",
     ) -> None:
-        if AsyncOpenAI is None:  # pragma: no cover
-            raise ImportError("openai package is required for LLMClient")
-        self.api_key = api_key or os.getenv("LLM_API_KEY")
-        self.base_url = base_url or os.getenv("LLM_BASE_URL")
-        self.model = model or os.getenv("LLM_MODEL", "qwen3.7-flash")
+        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
+        self.base_url = base_url or os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com")
+        self.model = model or os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
         self.provider = provider
-        self.client = AsyncOpenAI(api_key=self.api_key, base_url=self.base_url, timeout=timeout)
+        self.timeout = timeout
         self.cache = cache or LLMCache()
         self.tracker = tracker or CostTracker()
 
@@ -50,7 +46,7 @@ class LLMClient:
     ) -> RelevanceResponse:
         """Score how much the citing article relies on the cited article (0-1).
 
-        Checks cache first; on a miss, calls the LLM API, caches the result,
+        Checks cache first; on a miss, calls the Gemini API, caches the result,
         and records token usage/cost.
         """
         if use_cache:
@@ -67,25 +63,39 @@ class LLMClient:
             f"CITING ABSTRACT: {citing_abstract}\n\n"
             f"CITED ABSTRACT: {cited_abstract}\n"
         )
-        resp = await self.client.chat.completions.create(
-            model=self.model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=temperature,
-        )
-        content = resp.choices[0].message.content or "{}"
+        payload = {
+            "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+            "generationConfig": {"temperature": temperature, "responseMimeType": "application/json"},
+        }
+        url = self.base_url.rstrip("/") + f"/v1beta/models/{self.model}:generateContent"
 
-        input_tokens = getattr(resp.usage, "prompt_tokens", 0) or 0
-        output_tokens = getattr(resp.usage, "completion_tokens", 0) or 0
+        async with httpx.AsyncClient(
+            headers={"x-goog-api-key": self.api_key}, timeout=self.timeout
+        ) as http_client:
+            resp = await http_client.post(url, json=payload)
+            resp.raise_for_status()
+            data = resp.json()
 
-        import json
+        parts = data.get("candidates", [{}])[0].get("content", {}).get("parts", [])
+        content = "".join(part.get("text", "") for part in parts).strip()
+        if content.startswith("```json"):
+            content = content[len("```json") :].strip()
+        if content.startswith("```"):
+            content = content[len("```") :].strip()
+        if content.endswith("```"):
+            content = content[: -len("```")].strip()
+
+        usage = data.get("usageMetadata", {})
+        input_tokens = int(usage.get("promptTokenCount", 0) or 0)
+        output_tokens = int(usage.get("candidatesTokenCount", 0) or 0)
 
         try:
-            data = json.loads(content)
+            parsed = json.loads(content)
         except json.JSONDecodeError:
-            data = {"weight": 0.0, "reasoning": "parse_failed"}
+            parsed = {"weight": 0.0, "reasoning": "parse_failed"}
 
-        weight = max(0.0, min(1.0, float(data.get("weight", 0.0))))
-        reasoning = str(data.get("reasoning", ""))
+        weight = max(0.0, min(1.0, float(parsed.get("weight", 0.0))))
+        reasoning = str(parsed.get("reasoning", ""))
         response = RelevanceResponse(
             weight=weight,
             reasoning=reasoning,

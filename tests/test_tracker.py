@@ -5,8 +5,8 @@ from src.llm.tracker import CostTracker
 
 def test_tracker_record_and_totals():
     tracker = CostTracker()
-    tracker.record("qwen", "qwen3.7-flash", 1000, 500)
-    tracker.record("deepseek", "deepseek-chat", 2000, 1000)
+    tracker.record("gemini", "gemini-2.5-flash", 1000, 500)
+    tracker.record("gemini", "gemini-2.5-flash", 2000, 1000)
     totals = tracker.totals()
     assert totals["calls"] == 2
     assert totals["input_tokens"] == 3000
